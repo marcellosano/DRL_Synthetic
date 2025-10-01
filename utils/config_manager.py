@@ -60,7 +60,12 @@ class ConfigManager:
             # Resolve relative paths
             if not os.path.isabs(parent_path):
                 parent_path = (full_path.parent / parent_path).resolve()
-                parent_path = parent_path.relative_to(self.config_dir)
+                # Make relative to config_dir, handling both absolute and relative cases
+                try:
+                    parent_path = parent_path.relative_to(self.config_dir.resolve())
+                except ValueError:
+                    # If already relative or outside config_dir, use as-is
+                    parent_path = Path(parent_path).relative_to(Path.cwd() / self.config_dir)
 
             parent_config = self.load_config(str(parent_path))
             config = self._merge_configs(parent_config, config)
