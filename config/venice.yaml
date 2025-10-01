@@ -1,0 +1,90 @@
+# Configuration for Venice, Italy FOZ environment
+
+location:
+  name: "Venice"
+  country: "Italy"
+  coordinate_system: "EPSG:3857"
+
+zones:
+  count: 30
+  definition_file: "data/venice/foz_definitions.csv"
+  connectivity_matrix: "data/venice/zone_connectivity.npy"
+
+hazards:
+  type: "acqua_alta"
+  historical_events: "data/venice/historical_events.csv"
+  water_level_thresholds:
+    normal: 80  # cm
+    alert: 110  # cm
+    warning: 140  # cm
+    emergency: 180  # cm
+
+actions:
+  available:
+    - id: 0
+      name: "do_nothing"
+      cost: 0
+      duration: 0
+    - id: 1
+      name: "activate_mose_partial"
+      cost: 50
+      duration: 2
+      zones_affected: ["inlet_zones"]
+    - id: 2
+      name: "activate_mose_full"
+      cost: 100
+      duration: 3
+      zones_affected: "all"
+    - id: 3
+      name: "deploy_passerelle"
+      cost: 20
+      duration: 1
+      zones_affected: ["pedestrian_zones"]
+    - id: 4
+      name: "activate_pumps"
+      cost: 30
+      duration: 1
+      zones_affected: ["low_lying_zones"]
+    - id: 5
+      name: "issue_alert"
+      cost: 5
+      duration: 0
+    - id: 6
+      name: "close_businesses"
+      cost: 40
+      duration: 1
+      zones_affected: ["commercial_zones"]
+    - id: 7
+      name: "emergency_services"
+      cost: 60
+      duration: 2
+
+population:
+  residents: 50000
+  tourists_avg: 30000
+  distribution_file: "data/venice/population_by_zone.csv"
+
+infrastructure:
+  critical_facilities:
+    - "St. Mark's Basilica"
+    - "Doge's Palace"
+    - "Rialto Bridge"
+    - "Venice Hospital"
+  vulnerability_scores: "data/venice/infrastructure_vulnerability.csv"
+
+training:
+  episodes: 10000
+  batch_size: 64
+  learning_rate: 0.0003
+  gamma: 0.99
+  epsilon: 0.2
+  curriculum:
+    enabled: true
+    levels: 10
+    start_with_historical: true
+
+metrics:
+  track_lives_saved: true
+  track_economic_impact: true
+  track_infrastructure_damage: true
+  evaluation_frequency: 100

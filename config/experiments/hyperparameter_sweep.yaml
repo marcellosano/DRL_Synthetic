@@ -1,0 +1,61 @@
+# Hyperparameter sweep configuration
+# Defines parameter ranges for systematic exploration
+
+extends: "base.yaml"
+
+experiment:
+  name: "hyperparameter_sweep"
+  description: "Systematic exploration of key hyperparameters"
+
+# Define parameter ranges for sweeping
+sweep:
+  method: "grid"  # grid, random, bayesian
+
+  parameters:
+    # Learning rate sweep
+    training.learning_rate:
+      values: [0.0001, 0.0003, 0.001, 0.003]
+
+    # Batch size sweep
+    training.batch_size:
+      values: [32, 64, 128]
+
+    # PPO specific
+    training.clip_epsilon:
+      values: [0.1, 0.2, 0.3]
+
+    training.entropy_coef:
+      values: [0.001, 0.01, 0.1]
+
+    # Network architecture
+    network.hidden_dims:
+      values:
+        - [128, 64]
+        - [256, 128, 64]
+        - [512, 256, 128]
+
+    # Attention heads
+    network.attention_heads:
+      values: [4, 8, 16]
+
+    # Environment complexity
+    environment.max_storms:
+      values: [1, 2, 3, 4]
+
+    environment.storm_spawn_probability:
+      values: [0.05, 0.1, 0.2]
+
+# Shorter episodes for sweep efficiency
+training:
+  episodes: 500
+  save_frequency: 50
+
+# Track additional metrics for comparison
+logging:
+  track_metrics:
+    - "episode_reward"
+    - "episode_length"
+    - "lives_saved"
+    - "convergence_speed"
+    - "final_performance"
+    - "training_stability"

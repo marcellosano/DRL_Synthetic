@@ -1,0 +1,98 @@
+# Configuration for Gold Coast, Australia FOZ environment
+
+location:
+  name: "Gold Coast"
+  country: "Australia"
+  coordinate_system: "EPSG:28356"
+
+zones:
+  count: 50
+  definition_file: "data/goldcoast/foz_definitions.csv"
+  connectivity_matrix: "data/goldcoast/zone_connectivity.npy"
+
+hazards:
+  type: "coastal_flooding"
+  historical_events: "data/goldcoast/historical_events.csv"
+  storm_surge_levels:
+    normal: 0.5  # meters
+    minor: 1.0  # meters
+    moderate: 1.5  # meters
+    major: 2.0  # meters
+    extreme: 3.0  # meters
+
+actions:
+  available:
+    - id: 0
+      name: "do_nothing"
+      cost: 0
+      duration: 0
+    - id: 1
+      name: "evacuate_zone"
+      cost: 80
+      duration: 4
+      zones_affected: "selected"
+    - id: 2
+      name: "close_beaches"
+      cost: 30
+      duration: 1
+      zones_affected: ["beach_zones"]
+    - id: 3
+      name: "road_closures"
+      cost: 40
+      duration: 2
+      zones_affected: ["coastal_roads"]
+    - id: 4
+      name: "sandbag_deployment"
+      cost: 25
+      duration: 2
+      zones_affected: "selected"
+    - id: 5
+      name: "issue_warning"
+      cost: 5
+      duration: 0
+    - id: 6
+      name: "open_shelters"
+      cost: 50
+      duration: 2
+    - id: 7
+      name: "emergency_response"
+      cost: 70
+      duration: 3
+    - id: 8
+      name: "activate_flood_gates"
+      cost: 45
+      duration: 1
+      zones_affected: ["canal_zones"]
+
+population:
+  residents: 600000
+  tourists_peak: 100000
+  distribution_file: "data/goldcoast/population_by_zone.csv"
+
+infrastructure:
+  critical_facilities:
+    - "Gold Coast University Hospital"
+    - "Southport CBD"
+    - "Surfers Paradise"
+    - "Airport"
+    - "Power Stations"
+  vulnerability_scores: "data/goldcoast/infrastructure_vulnerability.csv"
+
+training:
+  episodes: 15000
+  batch_size: 128
+  learning_rate: 0.0002
+  gamma: 0.99
+  epsilon: 0.2
+  curriculum:
+    enabled: true
+    levels: 12
+    start_with_historical: false
+    use_monte_carlo: true
+
+metrics:
+  track_lives_saved: true
+  track_economic_impact: true
+  track_infrastructure_damage: true
+  track_evacuation_efficiency: true
+  evaluation_frequency: 100

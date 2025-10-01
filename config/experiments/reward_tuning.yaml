@@ -1,0 +1,34 @@
+# Reward function tuning configuration
+# For experimenting with different reward structures
+
+extends: "base.yaml"
+
+experiment:
+  name: "reward_tuning_v1"
+  description: "Testing aggressive early warning incentives"
+
+# Focus on reward modifications
+reward:
+  # Test: Strong early warning incentives
+  lives_saved_weight: 15.0      # Increased from 10.0
+  early_warning_bonus: 10.0     # Doubled from 5.0
+  false_alarm_penalty: -5.0     # Increased penalty from -2.0
+
+  # Economic considerations
+  economic_cost_weight: -0.05   # Reduced from -0.1 (less cost sensitive)
+  resource_efficiency_bonus: 2.0 # Increased from 1.0
+
+  # Time-based rewards
+  time_penalty_factor: -0.2     # Increased urgency
+  quick_response_bonus: 7.0     # Much higher quick response reward
+
+  # Multi-objective reweighting (testing safety-first approach)
+  objective_weights:
+    safety: 0.8      # Increased from 0.6
+    economy: 0.1     # Decreased from 0.2
+    efficiency: 0.1  # Decreased from 0.2
+
+# Longer training to see reward effects
+training:
+  episodes: 2000
+  log_frequency: 20  # More detailed logging for reward analysis

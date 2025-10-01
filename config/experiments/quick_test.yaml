@@ -1,0 +1,30 @@
+# Quick test configuration - overrides base.yaml for fast testing
+# Inherits from base.yaml and overrides specific values
+
+extends: "base.yaml"
+
+experiment:
+  name: "quick_test"
+  description: "Fast configuration for testing changes"
+
+training:
+  episodes: 100        # Much shorter for testing
+  batch_size: 32       # Smaller batch
+  max_steps_per_episode: 50
+
+environment:
+  grid_size: 10        # Smaller grid for speed
+  max_storms: 1        # Single storm only
+
+network:
+  hidden_dims: [128, 64]  # Smaller network
+
+curriculum:
+  enabled: false       # No curriculum for quick tests
+
+vectorization:
+  num_envs: 4         # Fewer parallel environments
+
+logging:
+  log_frequency: 5    # More frequent logging for short runs
+  plot_frequency: 25

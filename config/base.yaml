@@ -1,0 +1,166 @@
+# Base Configuration for DRL Coastal Environment
+# This serves as the default configuration that can be overridden
+
+experiment:
+  name: "coastal_drl_base"
+  description: "Base configuration for coastal emergency warning system"
+  seed: 42
+  save_frequency: 100  # Save model every N episodes
+  log_frequency: 10    # Log metrics every N episodes
+
+# Training hyperparameters
+training:
+  # PPO specific
+  learning_rate: 0.0003
+  lr_schedule: "constant"  # constant, linear, cosine, exponential
+  lr_decay_rate: 0.99     # for exponential schedule
+
+  # Batch and episode settings
+  batch_size: 64
+  mini_batch_size: 16
+  episodes: 1000
+  max_steps_per_episode: 200
+
+  # PPO hyperparameters
+  clip_epsilon: 0.2
+  value_loss_coef: 0.5
+  entropy_coef: 0.01
+  gae_lambda: 0.95
+  gamma: 0.99
+
+  # Optimization
+  gradient_clip: 0.5
+  target_kl: 0.02
+  update_epochs: 4
+
+  # Memory and stability
+  memory_buffer_size: 10000
+  normalize_advantages: true
+  normalize_rewards: false
+
+# Environment configuration
+environment:
+  # Grid settings
+  grid_size: 20
+  cell_size: 1.0  # km per cell
+
+  # Population and infrastructure
+  population_density: 0.7        # 0.0 to 1.0
+  infrastructure_density: 0.5    # 0.0 to 1.0
+  vulnerable_population_ratio: 0.3  # elderly, disabled, etc.
+
+  # Hazard parameters
+  max_storms: 3
+  storm_intensity_range: [1, 5]  # category 1-5
+  storm_duration_range: [5, 20]  # timesteps
+  storm_spawn_probability: 0.1   # per timestep
+
+  # Physics
+  water_propagation_rate: 0.8
+  evacuation_time: 3            # timesteps needed for evacuation
+  infrastructure_resilience: 0.7
+
+# Neural network architecture
+network:
+  # State processing
+  state_dim: 100
+  hidden_dims: [256, 128, 64]
+  activation: "relu"  # relu, tanh, elu
+  dropout_rate: 0.1
+
+  # Attention mechanism
+  attention_heads: 8
+  attention_dim: 64
+  use_self_attention: true
+
+  # Action masking
+  use_action_masking: true
+  mask_invalid_actions: true
+
+# Reward function configuration
+reward:
+  # Core objectives
+  lives_saved_weight: 10.0
+  economic_cost_weight: -0.1
+  infrastructure_damage_weight: -5.0
+
+  # Behavioral incentives
+  early_warning_bonus: 5.0
+  false_alarm_penalty: -2.0
+  resource_efficiency_bonus: 1.0
+
+  # Timing rewards
+  time_penalty_factor: -0.1      # penalty increases over time
+  quick_response_bonus: 3.0
+
+  # Advanced reward shaping
+  sparse_rewards: false          # if true, only reward at episode end
+  shaped_rewards: true           # intermediate rewards during episode
+  reward_clipping: [-100, 100]   # clip rewards to this range
+
+  # Multi-objective weights (must sum to 1.0)
+  objective_weights:
+    safety: 0.6      # lives saved, evacuations
+    economy: 0.2     # cost minimization
+    efficiency: 0.2  # resource usage, timing
+
+# Curriculum learning
+curriculum:
+  enabled: true
+
+  # Difficulty progression
+  initial_difficulty: 0.3
+  max_difficulty: 1.0
+  difficulty_increase_rate: 0.05
+  difficulty_threshold: 0.8  # performance needed to increase difficulty
+
+  # Progressive features
+  start_with_single_storm: true
+  gradually_add_storms: true
+  increase_storm_intensity: true
+  add_infrastructure_failures: false
+
+# Vectorized environment settings
+vectorization:
+  num_envs: 8  # number of parallel environments
+  async_updates: true
+  shared_memory: true
+
+# Logging and monitoring
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  log_to_file: true
+  log_file: "logs/training.log"
+
+  # Metrics to track
+  track_metrics:
+    - "episode_reward"
+    - "episode_length"
+    - "lives_saved"
+    - "false_alarms"
+    - "resource_usage"
+    - "policy_loss"
+    - "value_loss"
+    - "entropy"
+    - "kl_divergence"
+    - "explained_variance"
+
+  # Visualization
+  plot_frequency: 50
+  save_plots: true
+  plot_directory: "plots/"
+
+# Device and performance
+device:
+  use_gpu: true
+  gpu_id: 0
+  num_workers: 4
+  pin_memory: true
+
+# Checkpointing
+checkpointing:
+  enabled: true
+  save_directory: "checkpoints/"
+  keep_last_n: 5
+  save_best: true
+  metric_to_track: "episode_reward"  # for saving best model
