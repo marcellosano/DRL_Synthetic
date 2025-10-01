@@ -35,7 +35,7 @@ env/
 
 # Jupyter Notebook
 .ipynb_checkpoints
-*.ipynb
+# *.ipynb  # Commented out to allow colab_training.ipynb
 
 # Data and logs
 data/venice/*.csv
